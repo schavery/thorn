@@ -132,12 +132,12 @@ public class GalleryAndCamera extends FragmentActivity implements
 	public static class CameraFragment extends Fragment {
 
 		public CameraFragment() {
-
+			
 		}
-
+		
 		@Override
-		public void onResume() {
-			super.onResume();
+		public void onStart() {
+			super.onStart();
 			Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
 			intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 10); // needs to be dynamic
 			GalleryAndCamera.CameraFragment.this.startActivityForResult(intent, 0);
@@ -148,11 +148,11 @@ public class GalleryAndCamera extends FragmentActivity implements
 			View rootView = inflater.inflate(R.layout.fragment_camera, container, false);
 			return rootView;
 		}
+		
 	}
 
 	public void openProfile(View v) {
-		GalleryAndCamera.this.startActivity(new Intent(GalleryAndCamera.this,
-				ProfileAndCamera.class));
+		GalleryAndCamera.this.startActivity(new Intent(GalleryAndCamera.this, Profile.class));
 	}
 
 }
