@@ -16,7 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class GalleryAndCamera extends FragmentActivity implements
-		ActionBar.TabListener {
+		ActionBar.TabListener, ViewPager.OnPageChangeListener {
 
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -50,10 +50,17 @@ public class GalleryAndCamera extends FragmentActivity implements
 		// Set up the ViewPager with the sections adapter.
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
+		mViewPager.setOnPageChangeListener(this);
 
 		actionBar.addTab(actionBar.newTab().setTabListener(this));
 		actionBar.addTab(actionBar.newTab().setTabListener(this));
 
+		mViewPager.setCurrentItem(1);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onRestart();
 		mViewPager.setCurrentItem(1);
 	}
 
@@ -67,19 +74,26 @@ public class GalleryAndCamera extends FragmentActivity implements
 	@Override
 	public void onTabSelected(ActionBar.Tab tab,
 			FragmentTransaction fragmentTransaction) {
-		// When the given tab is selected, switch to the corresponding page in
-		// the ViewPager.
-		mViewPager.setCurrentItem(tab.getPosition());
-		
+		// // When the given tab is selected, switch to the corresponding page
+		// in
+		// // the ViewPager.
+		// mViewPager.setCurrentItem(tab.getPosition());
+		//
+		// if (tab.getPosition() == 0) {
+		// openCamera();
+		// }
+
 	}
 
 	@Override
-	public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+	public void onTabUnselected(ActionBar.Tab tab,
+			FragmentTransaction fragmentTransaction) {
 
 	}
 
 	@Override
-	public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+	public void onTabReselected(ActionBar.Tab tab,
+			FragmentTransaction fragmentTransaction) {
 
 	}
 
@@ -135,24 +149,54 @@ public class GalleryAndCamera extends FragmentActivity implements
 
 		}
 
+		// @Override
+		// public void onAttach(Activity activity) {
+		// super.onAttach(activity);
+		// Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+		// intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 10); // needs to be
+		// // dynamic
+		// GalleryAndCamera.CameraFragment.this.startActivityForResult(intent,
+		// 0);
+		// }
+
 		@Override
-		public void onResume() {
-			super.onResume();
-			Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-			intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 10); // needs to be dynamic
-			GalleryAndCamera.CameraFragment.this.startActivityForResult(intent, 0);
-		}
-		
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_camera, container, false);
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,
+				Bundle savedInstanceState) {
+			View rootView = inflater.inflate(R.layout.fragment_camera,
+					container, false);
 			return rootView;
 		}
+	}
+
+	public void openCamera() {
+		Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+		intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 10); // needs to be
+																// dynamic
+		GalleryAndCamera.this.startActivityForResult(intent, 0);
 	}
 
 	public void openProfile(View v) {
 		GalleryAndCamera.this.startActivity(new Intent(GalleryAndCamera.this,
 				ProfileAndCamera.class));
+	}
+
+	@Override
+	public void onPageScrollStateChanged(int arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onPageScrolled(int arg0, float arg1, int arg2) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onPageSelected(int pos) {
+		if (pos == 0) {
+			openCamera();
+		}
 	}
 
 }
