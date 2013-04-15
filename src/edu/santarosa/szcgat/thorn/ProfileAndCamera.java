@@ -1,9 +1,8 @@
 package edu.santarosa.szcgat.thorn;
 
-import android.app.ActionBar;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -15,21 +14,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class ProfileAndCamera extends FragmentActivity implements
-		ActionBar.TabListener {
+		ViewPager.OnPageChangeListener {
 
-	/**
-	 * The {@link android.support.v4.view.PagerAdapter} that will provide
-	 * fragments for each of the sections. We use a
-	 * {@link android.support.v4.app.FragmentPagerAdapter} derivative, which
-	 * will keep every loaded fragment in memory. If this becomes too memory
-	 * intensive, it may be best to switch to a
-	 * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-	 */
 	SectionsPagerAdapter mSectionsPagerAdapter;
-
-	/**
-	 * The {@link ViewPager} that will host the section contents.
-	 */
 	ViewPager mViewPager;
 
 	@Override
@@ -37,22 +24,22 @@ public class ProfileAndCamera extends FragmentActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_profile_and_camera);
 
-		// Set up the action bar.
-		final ActionBar actionBar = getActionBar();
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-
-		// Create the adapter that will return a fragment for each of the three
+		// Create the adapter that will return a fragment the
 		// primary sections of the app.
 		mSectionsPagerAdapter = new SectionsPagerAdapter(
 				getSupportFragmentManager());
 
 		// Set up the ViewPager with the sections adapter.
-		mViewPager = (ViewPager) findViewById(R.id.pager);
+		mViewPager = (ViewPager) findViewById(R.id.profile_pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
+		mViewPager.setOnPageChangeListener(this);
 
-		actionBar.addTab(actionBar.newTab().setTabListener(this));
-		actionBar.addTab(actionBar.newTab().setTabListener(this));
+		mViewPager.setCurrentItem(1);
+	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
 		mViewPager.setCurrentItem(1);
 	}
 
@@ -63,30 +50,6 @@ public class ProfileAndCamera extends FragmentActivity implements
 		return true;
 	}
 
-	@Override
-	public void onTabSelected(ActionBar.Tab tab,
-			FragmentTransaction fragmentTransaction) {
-		// When the given tab is selected, switch to the corresponding page in
-		// the ViewPager.
-		mViewPager.setCurrentItem(tab.getPosition());
-	}
-
-	@Override
-	public void onTabUnselected(ActionBar.Tab tab,
-			FragmentTransaction fragmentTransaction) {
-
-	}
-
-	@Override
-	public void onTabReselected(ActionBar.Tab tab,
-			FragmentTransaction fragmentTransaction) {
-
-	}
-
-	/**
-	 * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-	 * one of the sections/tabs/pages.
-	 */
 	public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
 		public SectionsPagerAdapter(FragmentManager fm) {
@@ -111,17 +74,6 @@ public class ProfileAndCamera extends FragmentActivity implements
 			return 2;
 		}
 
-		// @Override
-		// public CharSequence getPageTitle(int position) {
-		// Locale l = Locale.getDefault();
-		// switch (position) {
-		// case 0:
-		// return getString(R.string.title_section1).toUpperCase(l);
-		// case 1:
-		// return getString(R.string.title_section2).toUpperCase(l);
-		// }
-		// return null;
-		// }
 	}
 
 	public static class ProfileFragment extends Fragment {
@@ -156,9 +108,27 @@ public class ProfileAndCamera extends FragmentActivity implements
 		}
 	}
 
-	public void openProfile(View v) {
-		ProfileAndCamera.this.startActivity(new Intent(ProfileAndCamera.this,
-				Profile.class));
+	public void openCamera() {
+		Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+		intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 10); // needs to be
+																// dynamic
+		ProfileAndCamera.this.startActivityForResult(intent, 0);
 	}
 
+	@Override
+	public void onPageScrollStateChanged(int arg0) {
+
+	}
+
+	@Override
+	public void onPageScrolled(int arg0, float arg1, int arg2) {
+
+	}
+
+	@Override
+	public void onPageSelected(int pos) {
+		if (pos == 0) {
+			openCamera();
+		}
+	}
 }

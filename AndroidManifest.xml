@@ -23,14 +23,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="edu.santarosa.szcgat.thorn.Gallery"
-            android:label="@string/title_activity_gallery" >
-        </activity>
-        <activity
-            android:name="edu.santarosa.szcgat.thorn.Profile"
-            android:label="@string/title_activity_profile" >
-        </activity>
-        <activity
             android:name="edu.santarosa.szcgat.thorn.ProfileAndCamera"
             android:label="@string/title_activity_profile_and_camera" >
         </activity>
