@@ -8,10 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.View;
-import android.view.ViewGroup;
 
 public class ProfileAndCamera extends FragmentActivity implements
 		ViewPager.OnPageChangeListener {
@@ -74,38 +71,6 @@ public class ProfileAndCamera extends FragmentActivity implements
 			return 2;
 		}
 
-	}
-
-	public static class ProfileFragment extends Fragment {
-
-		public ProfileFragment() {
-
-		}
-
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_profile,
-					container, false);
-
-			return rootView;
-		}
-	}
-
-	public static class CameraFragment extends Fragment {
-
-		public CameraFragment() {
-
-		}
-
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_camera,
-					container, false);
-
-			return rootView;
-		}
 	}
 
 	public void openCamera() {
