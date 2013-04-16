@@ -2,7 +2,6 @@ package edu.santarosa.szcgat.thorn;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -14,7 +13,7 @@ import android.view.View;
 public class GalleryAndCamera extends FragmentActivity implements
 		ViewPager.OnPageChangeListener {
 
-	SectionsPagerAdapter mSectionsPagerAdapter;
+	GalleryPagerAdapter mPagerAdapter;
 	ViewPager mViewPager;
 
 	@Override
@@ -24,12 +23,11 @@ public class GalleryAndCamera extends FragmentActivity implements
 
 		// Create the adapter that will return a fragment for the
 		// primary sections of the app.
-		mSectionsPagerAdapter = new SectionsPagerAdapter(
-				getSupportFragmentManager());
+		mPagerAdapter = new GalleryPagerAdapter(getSupportFragmentManager());
 
 		// Set up the ViewPager with the sections adapter.
 		mViewPager = (ViewPager) findViewById(R.id.gallery_pager);
-		mViewPager.setAdapter(mSectionsPagerAdapter);
+		mViewPager.setAdapter(mPagerAdapter);
 		mViewPager.setOnPageChangeListener(this);
 
 		mViewPager.setCurrentItem(1);
@@ -48,9 +46,9 @@ public class GalleryAndCamera extends FragmentActivity implements
 		return true;
 	}
 
-	public class SectionsPagerAdapter extends FragmentPagerAdapter {
+	public class GalleryPagerAdapter extends FragmentPagerAdapter {
 
-		public SectionsPagerAdapter(FragmentManager fm) {
+		public GalleryPagerAdapter(FragmentManager fm) {
 			super(fm);
 		}
 
@@ -74,13 +72,6 @@ public class GalleryAndCamera extends FragmentActivity implements
 
 	}
 
-	public void openCamera() {
-		Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-		intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 10); // needs to be
-																// dynamic
-		GalleryAndCamera.this.startActivityForResult(intent, 0);
-	}
-
 	public void openProfile(View v) {
 		GalleryAndCamera.this.startActivity(new Intent(GalleryAndCamera.this,
 				ProfileAndCamera.class));
@@ -99,7 +90,7 @@ public class GalleryAndCamera extends FragmentActivity implements
 	@Override
 	public void onPageSelected(int pos) {
 		if (pos == 0) {
-			openCamera();
+			CameraFragment.openCamera(this);
 		}
 	}
 
