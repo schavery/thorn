@@ -4,15 +4,18 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 
 public class GalleryFragment extends Fragment {
 
@@ -20,10 +23,23 @@ public class GalleryFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
-		GridView gridView = new GridView(container.getContext());
+		GridView gridView = (GridView) inflater.inflate(R.layout.gallery_grid,
+				container, false);
 		GalleryArrayAdapter adapter = new GalleryArrayAdapter(
 				container.getContext(), R.layout.gallery_item, getImageIds());
 		gridView.setAdapter(adapter);
+
+		gridView.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				Intent intent = new Intent(getActivity(),
+						ProfileAndCamera.class);
+				Log.d("thorn", "onItemClick pos =" + position);
+				intent.putExtra("image_pos", position + 1);
+				getActivity().startActivity(intent);
+			}
+		});
 
 		return gridView;
 	}
@@ -48,7 +64,7 @@ public class GalleryFragment extends Fragment {
 		return idArray;
 	}
 
-	public class GalleryArrayAdapter extends ArrayAdapter<Integer> {
+	private class GalleryArrayAdapter extends ArrayAdapter<Integer> {
 
 		public GalleryArrayAdapter(Context context, int textViewResourceId,
 				ArrayList<Integer> objects) {
@@ -65,8 +81,8 @@ public class GalleryFragment extends Fragment {
 				v = inflater.inflate(R.layout.gallery_item, null);
 			}
 
-			ImageButton ib = (ImageButton) v.findViewById(R.id.gallery_item);
-			ib.setImageResource(getItem(position));
+			ImageView imageView = (ImageView) v.findViewById(R.id.gallery_item);
+			imageView.setImageResource(getItem(position));
 
 			return v;
 		}

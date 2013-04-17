@@ -28,13 +28,13 @@ public class ProfileAndCamera extends FragmentActivity implements
 		mViewPager.setAdapter(mPagerAdapter);
 		mViewPager.setOnPageChangeListener(this);
 
-		mViewPager.setCurrentItem(1);
+		mViewPager.setCurrentItem(getIntent().getExtras().getInt("image_pos"));
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mViewPager.setCurrentItem(1);
+		mViewPager.setCurrentItem(getIntent().getExtras().getInt("image_pos"));
 	}
 
 	@Override
@@ -58,6 +58,9 @@ public class ProfileAndCamera extends FragmentActivity implements
 			}
 			else {
 				fragment = new ProfileFragment();
+				Bundle bundle = new Bundle();
+				bundle.putInt("pos", position - 1);
+				fragment.setArguments(bundle);
 			}
 
 			return fragment;
@@ -65,7 +68,7 @@ public class ProfileAndCamera extends FragmentActivity implements
 
 		@Override
 		public int getCount() {
-			return 2;
+			return 11;
 		}
 
 	}
