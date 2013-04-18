@@ -1,6 +1,10 @@
+/**
+ * @author Zachary Thompson
+ * @author Steve Avery
+ */
+
 package edu.santarosa.szcgat.thorn;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -8,10 +12,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
-import android.view.View;
 
-public class GalleryAndCamera extends FragmentActivity implements
-		ViewPager.OnPageChangeListener {
+public class GalleryAndCamera extends FragmentActivity {
 
 	GalleryPagerAdapter mPagerAdapter;
 	ViewPager mViewPager;
@@ -28,7 +30,8 @@ public class GalleryAndCamera extends FragmentActivity implements
 		// Set up the ViewPager with the sections adapter.
 		mViewPager = (ViewPager) findViewById(R.id.gallery_pager);
 		mViewPager.setAdapter(mPagerAdapter);
-		mViewPager.setOnPageChangeListener(this);
+		mViewPager.setOnPageChangeListener(new CameraFragment.CameraListener(
+				this));
 
 		mViewPager.setCurrentItem(1);
 	}
@@ -70,28 +73,6 @@ public class GalleryAndCamera extends FragmentActivity implements
 			return 2;
 		}
 
-	}
-
-	public void openProfile(View v) {
-		GalleryAndCamera.this.startActivity(new Intent(GalleryAndCamera.this,
-				ProfileAndCamera.class));
-	}
-
-	@Override
-	public void onPageScrollStateChanged(int arg0) {
-
-	}
-
-	@Override
-	public void onPageScrolled(int arg0, float arg1, int arg2) {
-
-	}
-
-	@Override
-	public void onPageSelected(int pos) {
-		if (pos == 0) {
-			CameraFragment.openCamera(this);
-		}
 	}
 
 }

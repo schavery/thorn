@@ -1,3 +1,8 @@
+/**
+ * @author Zachary Thompson
+ * @author Steve Avery
+ */
+
 package edu.santarosa.szcgat.thorn;
 
 import android.app.Service;
@@ -10,5 +15,5 @@ public class Processor extends Service {
 	public IBinder onBind(Intent arg0) {
 		return null;
 	}
-	
+
 }

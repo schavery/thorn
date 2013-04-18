@@ -1,7 +1,13 @@
+/**
+ * @author Zachary Thompson
+ * @author Steve Avery
+ */
+
 package edu.santarosa.szcgat.thorn;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +25,13 @@ import android.widget.ImageView;
 
 public class GalleryFragment extends Fragment {
 
+	private static List<Integer> itemIds = null;
+	private static int itemCount = 0;
+
+	public GalleryFragment() {
+		refreshIdsAndCount();
+	}
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -26,7 +39,7 @@ public class GalleryFragment extends Fragment {
 		GridView gridView = (GridView) inflater.inflate(R.layout.gallery_grid,
 				container, false);
 		GalleryArrayAdapter adapter = new GalleryArrayAdapter(
-				container.getContext(), R.layout.gallery_item, getImageIds());
+				container.getContext(), R.layout.gallery_item, itemIds);
 		gridView.setAdapter(adapter);
 
 		gridView.setOnItemClickListener(new OnItemClickListener() {
@@ -44,30 +57,26 @@ public class GalleryFragment extends Fragment {
 		return gridView;
 	}
 
-	private ArrayList<Integer> getImageIds() {
-		ArrayList<Integer> idArray = new ArrayList<Integer>();
-
-		Field[] fields = R.raw.class.getFields();
-		for (Field field : fields) {
-			try {
-				idArray.add(field.getInt(field));
-			}
-			catch (IllegalArgumentException e) {
-				Log.e("thorn", "IllegalArgumentException");
-				e.printStackTrace();
-			}
-			catch (IllegalAccessException e) {
-				Log.e("thorn", "IllegalAccessException");
-				e.printStackTrace();
-			}
+	public static List<Integer> getItemIds() {
+		if (itemIds == null) {
+			refreshIdsAndCount();
 		}
-		return idArray;
+
+		return itemIds;
 	}
 
-	private class GalleryArrayAdapter extends ArrayAdapter<Integer> {
+	public static int getItemCount() {
+		if (itemIds == null) {
+			refreshIdsAndCount();
+		}
+
+		return itemCount;
+	}
+
+	public class GalleryArrayAdapter extends ArrayAdapter<Integer> {
 
 		public GalleryArrayAdapter(Context context, int textViewResourceId,
-				ArrayList<Integer> objects) {
+				List<Integer> objects) {
 			super(context, textViewResourceId, objects);
 		}
 
@@ -86,5 +95,30 @@ public class GalleryFragment extends Fragment {
 
 			return v;
 		}
+	}
+
+	private static void refreshIdsAndCount() {
+		itemIds = getImageIds();
+		itemCount = itemIds.size();
+	}
+
+	private static List<Integer> getImageIds() {
+		List<Integer> idArray = new ArrayList<Integer>();
+
+		Field[] fields = R.raw.class.getFields();
+		for (Field field : fields) {
+			try {
+				idArray.add(field.getInt(field));
+			}
+			catch (IllegalArgumentException e) {
+				Log.e("thorn", "IllegalArgumentException");
+				e.printStackTrace();
+			}
+			catch (IllegalAccessException e) {
+				Log.e("thorn", "IllegalAccessException");
+				e.printStackTrace();
+			}
+		}
+		return idArray;
 	}
 }

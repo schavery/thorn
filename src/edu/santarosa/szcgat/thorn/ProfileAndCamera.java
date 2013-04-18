@@ -1,3 +1,8 @@
+/**
+ * @author Zachary Thompson
+ * @author Steve Avery
+ */
+
 package edu.santarosa.szcgat.thorn;
 
 import android.os.Bundle;
@@ -8,8 +13,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 
-public class ProfileAndCamera extends FragmentActivity implements
-		ViewPager.OnPageChangeListener {
+public class ProfileAndCamera extends FragmentActivity {
 
 	ProfilePagerAdapter mPagerAdapter;
 	ViewPager mViewPager;
@@ -26,7 +30,8 @@ public class ProfileAndCamera extends FragmentActivity implements
 		// Set up the ViewPager with the sections adapter.
 		mViewPager = (ViewPager) findViewById(R.id.profile_pager);
 		mViewPager.setAdapter(mPagerAdapter);
-		mViewPager.setOnPageChangeListener(this);
+		mViewPager.setOnPageChangeListener(new CameraFragment.CameraListener(
+				this));
 
 		mViewPager.setCurrentItem(getIntent().getExtras().getInt("image_pos"));
 	}
@@ -35,6 +40,14 @@ public class ProfileAndCamera extends FragmentActivity implements
 	protected void onResume() {
 		super.onResume();
 		mViewPager.setCurrentItem(getIntent().getExtras().getInt("image_pos"));
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		int curPos = mViewPager.getCurrentItem();
+		int resumePos = curPos != 0 ? curPos : 1;
+		getIntent().putExtra("image_pos", resumePos);
 	}
 
 	@Override
@@ -68,25 +81,9 @@ public class ProfileAndCamera extends FragmentActivity implements
 
 		@Override
 		public int getCount() {
-			return 11;
+			return GalleryFragment.getItemCount() + 1;
 		}
 
 	}
 
-	@Override
-	public void onPageScrollStateChanged(int arg0) {
-
-	}
-
-	@Override
-	public void onPageScrolled(int arg0, float arg1, int arg2) {
-
-	}
-
-	@Override
-	public void onPageSelected(int pos) {
-		if (pos == 0) {
-			CameraFragment.openCamera(this);
-		}
-	}
 }
