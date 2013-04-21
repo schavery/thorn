@@ -7,6 +7,9 @@
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="17" />
+    
+    <uses-permission
+        android:name="android.permissions.WRITE_EXTRENAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -26,6 +29,11 @@
             android:name="edu.santarosa.szcgat.thorn.ProfileAndCamera"
             android:label="@string/title_activity_profile_and_camera" >
         </activity>
+        <service 
+            android:enabled="true"
+            android:name=".Processor"
+            android:permission="edu.santarosa.szgcat.SERVICE_PERMISSION">
+        </service>
     </application>
 
 </manifest>

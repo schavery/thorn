@@ -5,12 +5,21 @@
 
 package edu.santarosa.szcgat.thorn;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,8 +36,8 @@ public class CameraFragment extends Fragment {
 
 	public static void openCamera(Activity activity) {
 		Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-		intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 10); // needs to be
-																// dynamic
+		intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 10);// needs to be
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, getOutputMediaFileUri());// dynamic
 		activity.startActivityForResult(intent, 0);
 	}
 
@@ -58,4 +67,44 @@ public class CameraFragment extends Fragment {
 
 	}
 
+	/** Create a file Uri */
+	private static Uri getOutputMediaFileUri(){
+		return Uri.fromFile(getOutputMediaFile());
+	}
+
+	/** Create a File */
+	// Suppressed because we are going to use US date format, with no l10n.
+	@SuppressLint("SimpleDateFormat")
+	private static File getOutputMediaFile(){
+		// To be safe, you should check that the SDCard is mounted
+		// using Environment.getExternalStorageState() before doing this.
+
+		File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+				Environment.DIRECTORY_PICTURES), "thorn");
+		File nomedia = new File(mediaStorageDir.getPath() + File.separator + 
+				".nomedia");
+
+		// Create the storage directory if it does not exist
+		if (! mediaStorageDir.exists()){
+			if (! mediaStorageDir.mkdirs()){
+				Log.d("thorn", "failed to create directory");
+				return null;
+			}
+
+			// Create a .nomedia since it won't exist at this point
+			try {
+				nomedia.createNewFile();
+			} catch (IOException e) {
+				Log.d("thorn", "failed to create .nomedia");
+			}
+		}
+
+		// Create a media file name
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+		File mediaFile;
+		mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+				timeStamp + ".mp4");
+
+		return mediaFile;
+	}
 }
