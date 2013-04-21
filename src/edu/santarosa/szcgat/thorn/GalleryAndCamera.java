@@ -5,6 +5,7 @@
 
 package edu.santarosa.szcgat.thorn;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -17,11 +18,14 @@ public class GalleryAndCamera extends FragmentActivity {
 
 	GalleryPagerAdapter mPagerAdapter;
 	ViewPager mViewPager;
+	ThornDatabase db;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_gallery_and_camera);
+
+		db = new ThornDatabase(this);
 
 		// Create the adapter that will return a fragment for the
 		// primary sections of the app.
@@ -49,6 +53,17 @@ public class GalleryAndCamera extends FragmentActivity {
 		return true;
 	}
 
+	@Override
+	protected void onActivityResult(int reqCode, int resCode, Intent intent) {
+		super.onActivityResult(reqCode, resCode, intent);
+
+		if (reqCode == CameraFragment.NEW_VIDEO) {
+			if (resCode == RESULT_OK) {
+				db.addGifUri(intent.getDataString());
+			}
+		}
+	}
+
 	public class GalleryPagerAdapter extends FragmentPagerAdapter {
 
 		public GalleryPagerAdapter(FragmentManager fm) {
@@ -74,5 +89,4 @@ public class GalleryAndCamera extends FragmentActivity {
 		}
 
 	}
-
 }
