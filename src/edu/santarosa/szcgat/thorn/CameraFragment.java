@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -79,14 +78,15 @@ public class CameraFragment extends Fragment {
 		// To be safe, you should check that the SDCard is mounted
 		// using Environment.getExternalStorageState() before doing this.
 
-		File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-				Environment.DIRECTORY_PICTURES), "thorn");
-		File nomedia = new File(mediaStorageDir.getPath() + File.separator + 
+		File thornDir  = new File(Environment.getExternalStoragePublicDirectory(
+				Environment.DIRECTORY_DCIM), "thorn");
+		File thornTmpDir = new File(thornDir.getPath(), "tmp");
+		File nomedia = new File(thornDir.getPath() + File.separator + 
 				".nomedia");
 
 		// Create the storage directory if it does not exist
-		if (! mediaStorageDir.exists()){
-			if (! mediaStorageDir.mkdirs()){
+		if (! thornDir.exists()){
+			if (! thornDir.mkdirs()){
 				Log.d("thorn", "failed to create directory");
 				return null;
 			}
@@ -94,15 +94,16 @@ public class CameraFragment extends Fragment {
 			// Create a .nomedia since it won't exist at this point
 			try {
 				nomedia.createNewFile();
+				thornTmpDir.mkdir();
 			} catch (IOException e) {
-				Log.d("thorn", "failed to create .nomedia");
+				Log.d("thorn", "failed to create .nomedia or tmp");
 			}
 		}
 
 		// Create a media file name
-		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+		String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
 		File mediaFile;
-		mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+		mediaFile = new File(thornTmpDir.getPath() + File.separator +
 				timeStamp + ".mp4");
 
 		return mediaFile;
