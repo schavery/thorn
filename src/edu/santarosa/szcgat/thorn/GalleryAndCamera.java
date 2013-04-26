@@ -12,20 +12,18 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.Menu;
 
 public class GalleryAndCamera extends FragmentActivity {
 
-	GalleryPagerAdapter mPagerAdapter;
-	ViewPager mViewPager;
-	ThornDatabase db;
+	private GalleryPagerAdapter mPagerAdapter;
+	private ViewPager mViewPager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_gallery_and_camera);
 
-		db = new ThornDatabase(this);
+		setContentView(R.layout.activity_gallery_and_camera);
+		Gif.setContext(this);
 
 		// Create the adapter that will return a fragment for the
 		// primary sections of the app.
@@ -47,21 +45,26 @@ public class GalleryAndCamera extends FragmentActivity {
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-	@Override
 	protected void onActivityResult(int reqCode, int resCode, Intent intent) {
 		super.onActivityResult(reqCode, resCode, intent);
 
 		if (reqCode == CameraFragment.NEW_VIDEO) {
 			if (resCode == RESULT_OK) {
-				db.addGifUri(intent.getDataString());
+				Gif newGif = Gif.create(intent.getDataString());
+				getGalleryFragment().update(newGif, Gif.CREATE);
+				// mGalleryFragment.update(newGif);
 			}
 		}
+	}
+
+	public GalleryFragment getGalleryFragment() {
+		GalleryFragment gallery = (GalleryFragment) getSupportFragmentManager()
+				.findFragmentByTag(getFragmentTag(1));
+		return gallery;
+	}
+
+	private String getFragmentTag(int pos) {
+		return "android:switcher:" + R.id.gallery_pager + ":" + pos;
 	}
 
 	public class GalleryPagerAdapter extends FragmentPagerAdapter {

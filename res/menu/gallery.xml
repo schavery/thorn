@@ -1,9 +1,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/action_settings"/>
-
+    <group
+        android:id="@+id/gallery_menu"
+        android:visible="false"
+        android:enabled="false" >
+        <item
+            android:id="@+id/total_selected"
+            android:showAsAction="always" />
+        <item
+            android:id="@+id/delete"
+            android:title="@string/sample"
+            android:showAsAction="always"
+            android:icon="@android:drawable/ic_menu_delete" />
+    </group>
 </menu>
