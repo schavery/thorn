@@ -59,11 +59,26 @@ public class ThornDatabase extends SQLiteOpenHelper {
 		return new Gif(id, uri);
 	}
 
-	public void deleteGif(Gif gif) {
-		SQLiteDatabase db = this.getWritableDatabase();
-		long id = gif.getId();
-		db.delete(TABLE_GIF, COLUMN_ID + " = " + id, null);
+	public Gif getGif(long id) {
+		String[] allColumns = { COLUMN_ID, COLUMN_GIF_URI };
 
+		SQLiteDatabase db = this.getWritableDatabase();
+
+		Cursor cursor = db.query(TABLE_GIF, allColumns, COLUMN_ID + "=?",
+				new String[] { String.valueOf(id) }, null, null, null);
+
+		if (cursor != null) {
+			cursor.moveToFirst();
+		}
+
+		return cursorToGif(cursor);
+	}
+
+	public void deleteGif(long id) {
+		SQLiteDatabase db = this.getWritableDatabase();
+		db.delete(TABLE_GIF, COLUMN_ID + "=?",
+				new String[] { String.valueOf(id) });
+		Log.d("thorn", "gif deleted");
 	}
 
 	public List<Gif> getAllGifs() {

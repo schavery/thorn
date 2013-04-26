@@ -50,8 +50,8 @@ public class GalleryAndCamera extends FragmentActivity {
 
 		if (reqCode == CameraFragment.NEW_VIDEO) {
 			if (resCode == RESULT_OK) {
-				Gif newGif = Gif.create(intent.getDataString());
-				getGalleryFragment().update(newGif, Gif.CREATE);
+				Gif.create(intent.getDataString());
+				getGalleryFragment().update();
 				// mGalleryFragment.update(newGif);
 			}
 		}

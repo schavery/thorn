@@ -5,8 +5,9 @@
 
 package edu.santarosa.szcgat.thorn;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.content.Context;
 import android.content.Intent;
@@ -31,11 +32,11 @@ public class GalleryFragment extends Fragment {
 	private GalleryArrayAdapter adapter;
 	private static List<Gif> gifs = null;
 	private static int gifCount = 0;
-	private List<View> highlightedViews;
-	private List<Gif> selectedForDelete;
+	private Map<Long, View> selectedGifs;
 
 	public GalleryFragment() {
 		updateGifsAndCount();
+		selectedGifs = new HashMap<Long, View>();
 	}
 
 	@Override
@@ -64,14 +65,13 @@ public class GalleryFragment extends Fragment {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				if (highlightedViews.contains(view)) {
-					highlightedViews.remove(view);
-					selectedForDelete.remove(gifs.get(position));
-					view.setBackgroundColor(Color.WHITE);
+				long gifId = gifs.get(position).getId();
+
+				if (selectedGifs.containsKey(gifId)) {
+					selectedGifs.remove(gifId).setBackgroundColor(Color.WHITE);
 				}
 				else {
-					highlightedViews.add(view);
-					selectedForDelete.add(gifs.get(position));
+					selectedGifs.put(gifId, view);
 					view.setBackgroundColor(Color.MAGENTA);
 				}
 				getActivity().invalidateOptionsMenu();
@@ -93,7 +93,7 @@ public class GalleryFragment extends Fragment {
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
 		super.onPrepareOptionsMenu(menu);
-		if (highlightedViews.isEmpty()) {
+		if (selectedGifs.isEmpty()) {
 			menu.setGroupEnabled(R.id.gallery_menu, false);
 			menu.setGroupVisible(R.id.gallery_menu, false);
 		}
@@ -102,7 +102,7 @@ public class GalleryFragment extends Fragment {
 			menu.setGroupEnabled(R.id.gallery_menu, true);
 			menu.setGroupVisible(R.id.gallery_menu, true);
 			menu.findItem(R.id.total_selected).setTitle(
-					highlightedViews.size() + " selected");
+					selectedGifs.size() + " selected");
 		}
 	}
 
@@ -110,47 +110,26 @@ public class GalleryFragment extends Fragment {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case (R.id.delete):
-			for (Gif gif : selectedForDelete) {
-				gif.destroy();
-				update(gif, Gif.DESTROY);
+			for (long gifId : selectedGifs.keySet()) {
+				Gif.destroy(gifId);
 			}
+			update();
 			resetDelete();
 			break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
 
-	private void resetDelete() {
-		highlightedViews = new ArrayList<View>();
-		selectedForDelete = new ArrayList<Gif>();
-		getActivity().invalidateOptionsMenu();
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		resetDelete();
-	}
-
 	@Override
 	public void onPause() {
 		super.onPause();
-
-		for (View view : highlightedViews) {
-			view.setBackgroundColor(Color.WHITE);
-		}
+		resetDelete();
 	}
 
-	public void update(Gif gif, int action) {
+	public void update() {
 		updateGifsAndCount();
-		switch (action) {
-		case Gif.CREATE:
-			adapter.add(gif);
-			break;
-		case Gif.DESTROY:
-			adapter.remove(gif);
-			break;
-		}
+		adapter.clear();
+		adapter.addAll(gifs);
 		adapter.notifyDataSetChanged();
 	}
 
@@ -166,6 +145,14 @@ public class GalleryFragment extends Fragment {
 			updateGifsAndCount();
 		}
 		return gifCount;
+	}
+
+	private void resetDelete() {
+		for (View view : selectedGifs.values()) {
+			view.setBackgroundColor(Color.WHITE);
+		}
+		selectedGifs = new HashMap<Long, View>();
+		getActivity().invalidateOptionsMenu();
 	}
 
 	private static void updateGifsAndCount() {

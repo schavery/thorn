@@ -14,6 +14,7 @@ public class Gif {
 
 	private long id;
 	private String uri;
+	private String absolutePath;
 	private static Context context;
 	private static ThornDatabase db = null;
 
@@ -32,13 +33,15 @@ public class Gif {
 		return db.addGif(uri);
 	}
 
-	public static void destroy(Gif gif) {
-		String gifPath = Environment
-				.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
-				+ "/thorn/" + Uri.parse(gif.getUri()).getLastPathSegment();
-		File gifFile = new File(gifPath);
+	public static Gif find(long id) {
+		return db.getGif(id);
+	}
+
+	public static void destroy(long id) {
+		Gif gif = Gif.find(id);
+		File gifFile = new File(gif.getAbsolutePath());
 		gifFile.delete();
-		db.deleteGif(gif);
+		db.deleteGif(id);
 	}
 
 	// METHODS
@@ -46,15 +49,15 @@ public class Gif {
 	public Gif(long id, String uri) {
 		this.id = id;
 		this.uri = uri;
+		this.absolutePath = Environment
+				.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
+				+ "/thorn/tmp/" + Uri.parse(uri).getLastPathSegment();
 	}
 
 	public void destroy() {
-		String gifPath = Environment
-				.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
-				+ "/thorn/tmp/" + Uri.parse(uri).getLastPathSegment();
-		File gifFile = new File(gifPath);
+		File gifFile = new File(absolutePath);
 		gifFile.delete();
-		db.deleteGif(this);
+		db.deleteGif(id);
 	}
 
 	public long getId() {
@@ -63,6 +66,10 @@ public class Gif {
 
 	public String getUri() {
 		return uri;
+	}
+
+	public String getAbsolutePath() {
+		return absolutePath;
 	}
 
 	@Override
