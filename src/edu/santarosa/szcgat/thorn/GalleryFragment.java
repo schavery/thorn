@@ -26,28 +26,47 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class GalleryFragment extends Fragment {
 
-	private GalleryArrayAdapter adapter;
 	private static List<Gif> gifs = null;
 	private static int gifCount = 0;
+
+	private GalleryArrayAdapter adapter;
 	private Map<Long, View> selectedGifs;
 
-	public GalleryFragment() {
-		updateGifsAndCount();
-		selectedGifs = new HashMap<Long, View>();
+	// STATIC METHODS
+
+	public static List<Gif> getGifs() {
+		if (gifs == null) {
+			updateGifsAndCount();
+		}
+		return gifs;
 	}
+
+	public static int getGifCount() {
+		if (gifs == null) {
+			updateGifsAndCount();
+		}
+		return gifCount;
+	}
+
+	// OBJECT METHODS
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
+		gifs = Gif.all();
+		gifCount = gifs.size();
+		adapter = new GalleryArrayAdapter(container.getContext(),
+				R.layout.gallery_text, gifs);
+		selectedGifs = new HashMap<Long, View>();
+
 		ListView view = (ListView) inflater.inflate(R.layout.gallery_list,
 				container, false);
 
-		adapter = new GalleryArrayAdapter(container.getContext(),
-				R.layout.gallery_text, gifs);
 		view.setAdapter(adapter);
 
 		view.setOnItemClickListener(new OnItemClickListener() {
@@ -121,6 +140,15 @@ public class GalleryFragment extends Fragment {
 	}
 
 	@Override
+	public void onResume() {
+		super.onResume();
+		if (gifCount == 0) {
+			Toast.makeText(getActivity(), "Swipe left to create a video",
+					Toast.LENGTH_LONG).show();
+		}
+	}
+
+	@Override
 	public void onPause() {
 		super.onPause();
 		resetDelete();
@@ -130,22 +158,9 @@ public class GalleryFragment extends Fragment {
 		updateGifsAndCount();
 		adapter.clear();
 		adapter.addAll(gifs);
-		adapter.notifyDataSetChanged();
 	}
 
-	public static List<Gif> getGifs() {
-		if (gifs == null) {
-			updateGifsAndCount();
-		}
-		return gifs;
-	}
-
-	public static int getGifCount() {
-		if (gifs == null) {
-			updateGifsAndCount();
-		}
-		return gifCount;
-	}
+	// PRIVATE METHODS
 
 	private void resetDelete() {
 		for (View view : selectedGifs.values()) {
@@ -159,6 +174,8 @@ public class GalleryFragment extends Fragment {
 		gifs = Gif.all();
 		gifCount = gifs.size();
 	}
+
+	// HELPER CLASSES
 
 	public class GalleryArrayAdapter extends ArrayAdapter<Gif> {
 

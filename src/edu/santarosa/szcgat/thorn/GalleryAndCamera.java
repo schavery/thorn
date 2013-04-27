@@ -18,6 +18,8 @@ public class GalleryAndCamera extends FragmentActivity {
 	private GalleryPagerAdapter mPagerAdapter;
 	private ViewPager mViewPager;
 
+	// OBJECT METHODS
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -25,11 +27,8 @@ public class GalleryAndCamera extends FragmentActivity {
 		setContentView(R.layout.activity_gallery_and_camera);
 		Gif.setContext(this);
 
-		// Create the adapter that will return a fragment for the
-		// primary sections of the app.
 		mPagerAdapter = new GalleryPagerAdapter(getSupportFragmentManager());
 
-		// Set up the ViewPager with the sections adapter.
 		mViewPager = (ViewPager) findViewById(R.id.gallery_pager);
 		mViewPager.setAdapter(mPagerAdapter);
 		mViewPager.setOnPageChangeListener(new CameraFragment.CameraListener(
@@ -52,8 +51,8 @@ public class GalleryAndCamera extends FragmentActivity {
 			if (resCode == RESULT_OK) {
 				Gif.create(intent.getDataString());
 				getGalleryFragment().update();
-				// mGalleryFragment.update(newGif);
 			}
+
 		}
 	}
 
@@ -63,9 +62,13 @@ public class GalleryAndCamera extends FragmentActivity {
 		return gallery;
 	}
 
+	// PRIVATE METHODS
+
 	private String getFragmentTag(int pos) {
 		return "android:switcher:" + R.id.gallery_pager + ":" + pos;
 	}
+
+	// HELPER CLASSES
 
 	public class GalleryPagerAdapter extends FragmentPagerAdapter {
 

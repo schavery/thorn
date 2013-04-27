@@ -78,7 +78,6 @@ public class ThornDatabase extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getWritableDatabase();
 		db.delete(TABLE_GIF, COLUMN_ID + "=?",
 				new String[] { String.valueOf(id) });
-		Log.d("thorn", "gif deleted");
 	}
 
 	public List<Gif> getAllGifs() {
