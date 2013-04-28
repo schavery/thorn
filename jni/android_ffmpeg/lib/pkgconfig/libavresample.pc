@@ -1,0 +1,14 @@
+prefix=/home/esteves/android-ffmpeg
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: libavresample
+Description: Libav audio resampling library
+Version: 0.0.3
+Requires: 
+Requires.private: 
+Conflicts:
+Libs: -L${libdir} -lavresample -lx264 -lm -lz -lgcc
+Libs.private: 
+Cflags: -I${includedir}

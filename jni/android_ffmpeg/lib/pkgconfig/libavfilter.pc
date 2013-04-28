@@ -1,0 +1,14 @@
+prefix=/home/esteves/android-ffmpeg
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: libavfilter
+Description: FFmpeg video filtering library
+Version: 3.16.101
+Requires: libswscale = 2.1.101
+Requires.private: 
+Conflicts:
+Libs: -L${libdir} -lavfilter -lx264 -lm -lz -lgcc
+Libs.private: 
+Cflags: -I${includedir}

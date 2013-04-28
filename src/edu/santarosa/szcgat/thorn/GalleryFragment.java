@@ -194,10 +194,12 @@ public class GalleryFragment extends Fragment {
 				view = inflater.inflate(R.layout.gallery_text, null);
 			}
 
-			TextView child = (TextView) view.findViewById(R.id.gallery_text);
-			child.setText(getItem(position).getUri());
-
-			return view;
+			//TextView child = (TextView) view.findViewById(R.id.gallery_text);
+			//child.setText(getItem(position).getUri());
+			
+			TextView child = TestJni.getView(getItem(position).getAbsolutePath(), getActivity());
+			
+			return child;
 		}
 	}
 }
