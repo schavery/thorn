@@ -33,21 +33,31 @@ public class ProfileAndCamera extends FragmentActivity {
 		mViewPager.setOnPageChangeListener(new CameraFragment.CameraListener(
 				this));
 
-		mViewPager.setCurrentItem(getIntent().getExtras().getInt("image_pos"));
+		int index = getIntent().getExtras().getInt("gif_index");
+		mViewPager.setCurrentItem(positionOf(index));
+	}
+
+	private int positionOf(int index) {
+		return index + 1;
+	}
+
+	private int indexOf(int position) {
+		return position - 1;
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mViewPager.setCurrentItem(getIntent().getExtras().getInt("image_pos"));
+		int index = getIntent().getExtras().getInt("gif_index");
+		mViewPager.setCurrentItem(positionOf(index));
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		int curPos = mViewPager.getCurrentItem();
-		int resumePos = curPos != 0 ? curPos : 1;
-		getIntent().putExtra("image_pos", resumePos);
+		int index = indexOf(mViewPager.getCurrentItem());
+		int resumeIndex = index > 0 ? index : 0;
+		getIntent().putExtra("gif_index", resumeIndex);
 	}
 
 	@Override
@@ -72,7 +82,7 @@ public class ProfileAndCamera extends FragmentActivity {
 			else {
 				fragment = new ProfileFragment();
 				Bundle bundle = new Bundle();
-				bundle.putInt("pos", position - 1);
+				bundle.putInt("gif_index", indexOf(position));
 				fragment.setArguments(bundle);
 			}
 
@@ -81,7 +91,7 @@ public class ProfileAndCamera extends FragmentActivity {
 
 		@Override
 		public int getCount() {
-			return GalleryFragment.getItemCount() + 1;
+			return GalleryFragment.getGifCount() + 1;
 		}
 
 	}

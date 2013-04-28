@@ -9,7 +9,8 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import android.annotation.SuppressLint;
+import java.util.Locale;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -24,7 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class CameraFragment extends Fragment {
-	private static final int CAPTURE_VIDEO = 0;
+	public static final int NEW_VIDEO = 0;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -36,16 +37,9 @@ public class CameraFragment extends Fragment {
 
 	public static void openCamera(Activity activity) {
 		Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-		intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 10); // needs to be dynamic
-		intent.putExtra(MediaStore.EXTRA_OUTPUT, getOutputMediaFileUri());
-		activity.startActivityForResult(intent, CAPTURE_VIDEO);
-	}
-	
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(requestCode == CAPTURE_VIDEO) {
-			// insert call to service with the URI from the Intent data.
-		}
+		intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 10);// needs to be
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, getOutputMediaFileUri());// dynamic
+		activity.startActivityForResult(intent, NEW_VIDEO);
 	}
 
 	public static class CameraListener implements
@@ -75,13 +69,13 @@ public class CameraFragment extends Fragment {
 	}
 
 	/** Create a file Uri */
-	private static Uri getOutputMediaFileUri(){
+	private static Uri getOutputMediaFileUri() {
 		return Uri.fromFile(getOutputMediaFile());
 	}
 
 	/** Create a File */
 	// Suppressed because we are going to use US date format, with no l10n.
-	@SuppressLint("SimpleDateFormat")
+	//@SuppressLint("SimpleDateFormat")
 	private static File getOutputMediaFile(){
 
 		if(! Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
@@ -111,7 +105,8 @@ public class CameraFragment extends Fragment {
 			}
 
 			// Create a media file name
-			String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+			String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss", Locale.US)
+					.format(new Date());
 			File mediaFile = new File(thornTmpDir.getPath() + File.separator +
 					timeStamp + ".mp4");
 			return mediaFile;
