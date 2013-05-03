@@ -195,7 +195,7 @@ public class GalleryFragment extends Fragment {
 			}
 
 			TextView child = (TextView) view.findViewById(R.id.gallery_text);
-			child.setText(getItem(position).getUri());
+			child.setText(getItem(position).getPath());
 
 			return view;
 		}

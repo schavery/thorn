@@ -31,7 +31,7 @@
         </activity>
         <service 
             android:enabled="true"
-            android:name=".Processor"
+            android:name=".GifProcessor"
             android:permission="edu.santarosa.szgcat.SERVICE_PERMISSION">
         </service>
     </application>

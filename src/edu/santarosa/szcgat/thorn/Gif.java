@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.List;
 
 import android.content.Context;
-import android.net.Uri;
-import android.os.Environment;
 
 public class Gif {
 
@@ -14,7 +12,7 @@ public class Gif {
 
 	private long id;
 	private String uri;
-	private String absolutePath;
+	private String path;
 	private static Context context;
 	private static ThornDatabase db = null;
 
@@ -29,8 +27,10 @@ public class Gif {
 		return db.getAllGifs();
 	}
 
-	public static Gif create(String uri) {
-		return db.addGif(uri);
+	public static Gif create(String filename) {
+		String path = CameraFragment.GIF_PATH + filename;
+		String uri = "file://" + path;
+		return db.addGif(uri, path);
 	}
 
 	public static Gif find(long id) {
@@ -39,23 +39,21 @@ public class Gif {
 
 	public static void destroy(long id) {
 		Gif gif = Gif.find(id);
-		File gifFile = new File(gif.getAbsolutePath());
+		File gifFile = new File(gif.getPath());
 		gifFile.delete();
 		db.deleteGif(id);
 	}
 
 	// METHODS
 
-	public Gif(long id, String uri) {
+	public Gif(long id, String uri, String path) {
 		this.id = id;
 		this.uri = uri;
-		this.absolutePath = Environment
-				.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
-				+ "/thorn/tmp/" + Uri.parse(uri).getLastPathSegment();
+		this.path = path;
 	}
 
 	public void destroy() {
-		File gifFile = new File(absolutePath);
+		File gifFile = new File(path);
 		gifFile.delete();
 		db.deleteGif(id);
 	}
@@ -68,8 +66,8 @@ public class Gif {
 		return uri;
 	}
 
-	public String getAbsolutePath() {
-		return absolutePath;
+	public String getPath() {
+		return path;
 	}
 
 	@Override

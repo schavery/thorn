@@ -26,6 +26,12 @@ import android.view.ViewGroup;
 
 public class CameraFragment extends Fragment {
 	public static final int NEW_VIDEO = 0;
+	public static final String VIDEO_PATH = Environment
+			.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
+			+ "/thorn/tmp/";
+	public static final String GIF_PATH = Environment
+			.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
+			+ "/thorn/";
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -74,23 +80,25 @@ public class CameraFragment extends Fragment {
 	}
 
 	/** Create a File */
-	// Suppressed because we are going to use US date format, with no l10n.
-	//@SuppressLint("SimpleDateFormat")
-	private static File getOutputMediaFile(){
+	private static File getOutputMediaFile() {
 
-		if(! Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+		if (!Environment.getExternalStorageState().equals(
+				Environment.MEDIA_MOUNTED)) {
 			Log.d("thorn", "file system is not mounted");
 			return null; // not exception safe
-		} else {
-			File thornDir  = new File(Environment.getExternalStoragePublicDirectory(
-					Environment.DIRECTORY_DCIM), "thorn");
+		}
+		else {
+			File thornDir = new File(
+					Environment
+							.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
+					"thorn");
 			File thornTmpDir = new File(thornDir.getPath(), "tmp");
-			File nomedia = new File(thornDir.getPath() + File.separator + 
-					".nomedia");
+			File nomedia = new File(thornDir.getPath() + File.separator
+					+ ".nomedia");
 
 			// Create the storage directory if it does not exist
-			if (! thornDir.exists()){
-				if (! thornDir.mkdirs()){
+			if (!thornDir.exists()) {
+				if (!thornDir.mkdirs()) {
 					Log.d("thorn", "failed to create directory");
 					return null; // not exception safe
 				}
@@ -99,7 +107,8 @@ public class CameraFragment extends Fragment {
 				try {
 					nomedia.createNewFile();
 					thornTmpDir.mkdir();
-				} catch (IOException e) {
+				}
+				catch (IOException e) {
 					Log.d("thorn", "failed to create .nomedia or tmp/");
 				}
 			}
@@ -107,8 +116,8 @@ public class CameraFragment extends Fragment {
 			// Create a media file name
 			String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss", Locale.US)
 					.format(new Date());
-			File mediaFile = new File(thornTmpDir.getPath() + File.separator +
-					timeStamp + ".mp4");
+			File mediaFile = new File(thornTmpDir.getPath() + File.separator
+					+ timeStamp + ".mp4");
 			return mediaFile;
 		}
 	}

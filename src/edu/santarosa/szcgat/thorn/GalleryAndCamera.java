@@ -5,18 +5,25 @@
 
 package edu.santarosa.szcgat.thorn;
 
+import java.lang.ref.WeakReference;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Messenger;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.widget.Toast;
 
 public class GalleryAndCamera extends FragmentActivity {
 
 	private GalleryPagerAdapter mPagerAdapter;
 	private ViewPager mViewPager;
+	private GifCreationHandler gifCreationHandler;
 
 	// OBJECT METHODS
 
@@ -28,6 +35,8 @@ public class GalleryAndCamera extends FragmentActivity {
 		Gif.setContext(this);
 
 		mPagerAdapter = new GalleryPagerAdapter(getSupportFragmentManager());
+
+		gifCreationHandler = new GifCreationHandler(this);
 
 		mViewPager = (ViewPager) findViewById(R.id.gallery_pager);
 		mViewPager.setAdapter(mPagerAdapter);
@@ -49,8 +58,17 @@ public class GalleryAndCamera extends FragmentActivity {
 
 		if (reqCode == CameraFragment.NEW_VIDEO) {
 			if (resCode == RESULT_OK) {
-				Gif.create(intent.getDataString());
-				getGalleryFragment().update();
+				Intent process = new Intent(this, GifProcessor.class);
+				Messenger messenger = new Messenger(gifCreationHandler);
+				process.putExtra("MESSENGER", messenger);
+				process.setData(intent.getData());
+				process.putExtra("uripath", intent.getDataString());
+				startService(process);
+				// Gif.create(intent.getDataString());
+				// getGalleryFragment().update();
+			}
+			if (resCode == RESULT_CANCELED) {
+				Toast.makeText(this, "Canceled!", Toast.LENGTH_SHORT).show();
 			}
 
 		}
@@ -69,6 +87,21 @@ public class GalleryAndCamera extends FragmentActivity {
 	}
 
 	// HELPER CLASSES
+
+	private static class GifCreationHandler extends Handler {
+		WeakReference<GalleryAndCamera> activity;
+
+		GifCreationHandler(GalleryAndCamera activity) {
+			this.activity = new WeakReference<GalleryAndCamera>(activity);
+		}
+
+		@Override
+		public void handleMessage(Message msg) {
+			GalleryAndCamera curActivity = activity.get();
+			Gif.create(msg.obj.toString());
+			curActivity.getGalleryFragment().update();
+		}
+	}
 
 	public class GalleryPagerAdapter extends FragmentPagerAdapter {
 
