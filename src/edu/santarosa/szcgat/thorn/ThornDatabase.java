@@ -19,8 +19,7 @@ public class ThornDatabase extends SQLiteOpenHelper {
 	private static final String TABLE_GIF = "gifs";
 
 	private static final String COLUMN_ID = "_id";
-	private static final String COLUMN_GIF_URI = "gif_uri";
-	private static final String COLUMN_GIF_PATH = "gif_path";
+	private static final String COLUMN_FILENAME = "gif_filename";
 
 	private ThornDatabase(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -36,8 +35,8 @@ public class ThornDatabase extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		String DATABASE_CREATE = "create table " + TABLE_GIF + "(" + COLUMN_ID
-				+ " integer primary key autoincrement, " + COLUMN_GIF_URI
-				+ " text not null, " + COLUMN_GIF_PATH + " text not null);";
+				+ " integer primary key autoincrement, " + COLUMN_FILENAME
+				+ " text not null);";
 		db.execSQL(DATABASE_CREATE);
 	}
 
@@ -48,21 +47,20 @@ public class ThornDatabase extends SQLiteOpenHelper {
 		onCreate(db);
 	}
 
-	public Gif addGif(String uri, String path) {
+	public Gif addGif(String filename) {
 		SQLiteDatabase db = this.getWritableDatabase();
 
 		ContentValues newGif = new ContentValues();
-		newGif.put(COLUMN_GIF_URI, uri);
-		newGif.put(COLUMN_GIF_PATH, path);
+		newGif.put(COLUMN_FILENAME, filename);
 
 		long id = db.insert(TABLE_GIF, null, newGif);
 		db.close();
 
-		return new Gif(id, uri, path);
+		return new Gif(id, filename);
 	}
 
 	public Gif getGif(long id) {
-		String[] allColumns = { COLUMN_ID, COLUMN_GIF_URI, COLUMN_GIF_PATH };
+		String[] allColumns = { COLUMN_ID, COLUMN_FILENAME };
 
 		SQLiteDatabase db = this.getWritableDatabase();
 
@@ -83,7 +81,7 @@ public class ThornDatabase extends SQLiteOpenHelper {
 	}
 
 	public List<Gif> getAllGifs() {
-		String[] allColumns = { COLUMN_ID, COLUMN_GIF_URI, COLUMN_GIF_PATH };
+		String[] allColumns = { COLUMN_ID, COLUMN_FILENAME };
 
 		SQLiteDatabase db = this.getWritableDatabase();
 
@@ -103,9 +101,8 @@ public class ThornDatabase extends SQLiteOpenHelper {
 	}
 
 	private Gif cursorToGif(Cursor cursor) {
-		Gif gifUri = new Gif(cursor.getLong(0), cursor.getString(1),
-				cursor.getString(2));
-		return gifUri;
+		Gif gif = new Gif(cursor.getLong(0), cursor.getString(1));
+		return gif;
 	}
 
 }

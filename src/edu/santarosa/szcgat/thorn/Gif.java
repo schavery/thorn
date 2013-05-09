@@ -11,8 +11,9 @@ public class Gif {
 	public static final int DESTROY = 1;
 
 	private long id;
-	private String uri;
+	private String filename;
 	private String path;
+	private String thumbnail;
 	private static Context context;
 	private static ThornDatabase db = null;
 
@@ -28,9 +29,7 @@ public class Gif {
 	}
 
 	public static Gif create(String filename) {
-		String path = CameraFragment.GIF_PATH + filename;
-		String uri = "file://" + path;
-		return db.addGif(uri, path);
+		return db.addGif(filename);
 	}
 
 	public static Gif find(long id) {
@@ -40,21 +39,28 @@ public class Gif {
 	public static void destroy(long id) {
 		Gif gif = Gif.find(id);
 		File gifFile = new File(gif.getPath());
+		File thumbFile = new File(gif.getThumbnail());
 		gifFile.delete();
+		thumbFile.delete();
 		db.deleteGif(id);
 	}
 
 	// METHODS
 
-	public Gif(long id, String uri, String path) {
+	public Gif(long id, String filename) {
 		this.id = id;
-		this.uri = uri;
-		this.path = path;
+		this.filename = filename;
+		this.path = Camera.THORN_PATH + File.separator + filename
+				+ ".gif";
+		this.thumbnail = Camera.THUMBNAIL_PATH + File.separator
+				+ filename + ".jpg";
 	}
 
 	public void destroy() {
 		File gifFile = new File(path);
+		File thumbFile = new File(thumbnail);
 		gifFile.delete();
+		thumbFile.delete();
 		db.deleteGif(id);
 	}
 
@@ -62,17 +68,21 @@ public class Gif {
 		return id;
 	}
 
-	public String getUri() {
-		return uri;
+	public String getFilename() {
+		return filename;
 	}
 
 	public String getPath() {
 		return path;
 	}
 
+	public String getThumbnail() {
+		return thumbnail;
+	}
+
 	@Override
 	public String toString() {
-		return uri;
+		return filename;
 	}
 
 }

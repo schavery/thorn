@@ -34,7 +34,8 @@ public class GifProcessor extends IntentService {
 	@Override
 	protected void onHandleIntent(Intent intent) {
 
-		String ffmpegPath = getFilesDir().getAbsolutePath() + "/ffmpeg";
+		String ffmpegPath = getFilesDir().getAbsolutePath() + File.separator
+				+ "ffmpeg";
 		File ffmpeg = new File(ffmpegPath);
 
 		if (!ffmpeg.exists()) {
@@ -46,15 +47,25 @@ public class GifProcessor extends IntentService {
 		}
 
 		String tempPath = intent.getData().getPath();
-		String gifFilename = intent.getData().getLastPathSegment()
-				.replaceFirst(".mp4", ".gif");
-		String gifPath = CameraFragment.GIF_PATH + gifFilename;
+		String baseFilename = intent.getData().getLastPathSegment()
+				.replaceFirst(".mp4", "");
+		String gifPath = Camera.THORN_PATH + File.separator
+				+ baseFilename + ".gif";
+		String thumbnailPath = Camera.THUMBNAIL_PATH + File.separator
+				+ baseFilename + ".jpg";
 
-		String ffmpegCommand = ffmpegPath + " -ss 00:00:00.000 -i " + tempPath
+		String createGifCommand = ffmpegPath + " -ss 00:00:00.000 -i "
+				+ tempPath
 				+ " -pix_fmt rgb24 -r 10 -s 320x240 -t 00:00:10.000 " + gifPath;
 
+		String createThumbnailCommand = ffmpegPath + " -i " + tempPath
+				+ " -vcodec mjpeg -vframes 1 -an -f rawvideo -s 512x384 "
+				+ thumbnailPath;
+
 		try {
-			Runtime.getRuntime().exec(ffmpegCommand).waitFor();
+			Runtime runtime = Runtime.getRuntime();
+			runtime.exec(createGifCommand).waitFor();
+			runtime.exec(createThumbnailCommand).waitFor();
 		}
 		catch (IOException e) {
 			Log.e("thorn", "IOException", e);
@@ -65,7 +76,7 @@ public class GifProcessor extends IntentService {
 
 		Messenger messenger = (Messenger) intent.getExtras().get("MESSENGER");
 		Message msg = Message.obtain();
-		msg.obj = gifFilename;
+		msg.obj = baseFilename;
 
 		try {
 			messenger.send(msg);
@@ -84,7 +95,7 @@ public class GifProcessor extends IntentService {
 		try {
 			in = getAssets().open("ffmpeg");
 			out = new FileOutputStream(getFilesDir().getAbsolutePath()
-					+ "/ffmpeg");
+					+ File.separator + "ffmpeg");
 			copyFile(in, out);
 			in.close();
 			in = null;
@@ -105,15 +116,3 @@ public class GifProcessor extends IntentService {
 		}
 	}
 }
-// Process process = Runtime
-// .getRuntime()
-// .exec("/data/data/edu.santarosa.szcgat.thorn/files/ffmpeg -i /storage/emulated/0/DCIM/thorn/tmp/20130429152358.mp4 -pix_fmt rgb24 /storage/emulated/0/DCIM/thorn/test.gif");
-// // Reads stdout.
-// process.waitFor();
-// }
-// catch (IOException e) {
-// Log.e("thorn", "IOException", e);
-// }
-// catch (InterruptedException e) {
-// Log.e("thorn", "InterruptedException", e);
-// }
