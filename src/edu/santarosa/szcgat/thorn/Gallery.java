@@ -74,9 +74,21 @@ public class Gallery extends Fragment {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				Intent intent = new Intent(getActivity(), ProfileActivity.class);
-				intent.putExtra("gif_index", position);
-				getActivity().startActivity(intent);
+				if (selectedGifs.isEmpty()) {
+					Intent intent = new Intent(getActivity(),
+							ProfileActivity.class);
+					intent.putExtra("gif_index", position);
+					getActivity().startActivity(intent);
+				}
+				else {
+					long gifId = gifs.get(position).getId();
+					if (selectedGifs.containsKey(gifId)) {
+						highlightGif(gifId, view, false);
+					}
+					else {
+						highlightGif(gifId, view, true);
+					}
+				}
 			}
 		});
 
@@ -87,14 +99,11 @@ public class Gallery extends Fragment {
 				long gifId = gifs.get(position).getId();
 
 				if (selectedGifs.containsKey(gifId)) {
-					selectedGifs.remove(gifId).setBackgroundResource(
-							R.drawable.black_border);
+					highlightGif(gifId, view, false);
 				}
 				else {
-					selectedGifs.put(gifId, view);
-					view.setBackgroundResource(R.drawable.blue_border);
+					highlightGif(gifId, view, true);
 				}
-				getActivity().invalidateOptionsMenu();
 				return true;
 			}
 		});
@@ -114,13 +123,17 @@ public class Gallery extends Fragment {
 	public void onPrepareOptionsMenu(Menu menu) {
 		super.onPrepareOptionsMenu(menu);
 		if (selectedGifs.isEmpty()) {
-			menu.setGroupEnabled(R.id.gallery_menu, false);
-			menu.setGroupVisible(R.id.gallery_menu, false);
+			menu.setGroupEnabled(R.id.delete_menu, false);
+			menu.setGroupVisible(R.id.delete_menu, false);
+			menu.setGroupEnabled(R.id.default_menu, true);
+			menu.setGroupVisible(R.id.default_menu, true);
 		}
 
 		else {
-			menu.setGroupEnabled(R.id.gallery_menu, true);
-			menu.setGroupVisible(R.id.gallery_menu, true);
+			menu.setGroupEnabled(R.id.default_menu, false);
+			menu.setGroupVisible(R.id.default_menu, false);
+			menu.setGroupEnabled(R.id.delete_menu, true);
+			menu.setGroupVisible(R.id.delete_menu, true);
 			menu.findItem(R.id.total_selected).setTitle(
 					selectedGifs.size() + " selected");
 		}
@@ -136,6 +149,8 @@ public class Gallery extends Fragment {
 			update();
 			resetDelete();
 			break;
+		case (R.id.new_gif):
+			Camera.openCamera(getActivity());
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -174,6 +189,19 @@ public class Gallery extends Fragment {
 	private static void updateGifsAndCount() {
 		gifs = Gif.all();
 		gifCount = gifs.size();
+	}
+
+	private void highlightGif(long gifId, View view, boolean highlight) {
+		if (highlight) {
+			selectedGifs.put(gifId, view);
+			view.setBackgroundResource(R.drawable.blue_border);
+		}
+		else {
+			selectedGifs.remove(gifId).setBackgroundResource(
+					R.drawable.black_border);
+		}
+
+		getActivity().invalidateOptionsMenu();
 	}
 
 	// HELPER CLASSES
