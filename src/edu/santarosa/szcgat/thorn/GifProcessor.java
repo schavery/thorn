@@ -5,10 +5,12 @@
 
 package edu.santarosa.szcgat.thorn;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 import android.app.IntentService;
@@ -49,8 +51,8 @@ public class GifProcessor extends IntentService {
 		String tempPath = intent.getData().getPath();
 		String baseFilename = intent.getData().getLastPathSegment()
 				.replaceFirst(".mp4", "");
-		String gifPath = Camera.THORN_PATH + File.separator
-				+ baseFilename + ".gif";
+		String gifPath = Camera.THORN_PATH + File.separator + baseFilename
+				+ ".gif";
 		String thumbnailPath = Camera.THUMBNAIL_PATH + File.separator
 				+ baseFilename + ".jpg";
 
@@ -64,7 +66,21 @@ public class GifProcessor extends IntentService {
 
 		try {
 			Runtime runtime = Runtime.getRuntime();
-			runtime.exec(createGifCommand).waitFor();
+			Process process = runtime.exec(createGifCommand);
+
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					process.getErrorStream()));
+			int read;
+			char[] buffer = new char[4096];
+			StringBuffer output = new StringBuffer();
+			while ((read = reader.read(buffer)) > 0) {
+				output.append(buffer, 0, read);
+			}
+			reader.close();
+
+			process.waitFor();
+			Log.d("thorn", output.toString());
+
 			runtime.exec(createThumbnailCommand).waitFor();
 		}
 		catch (IOException e) {
