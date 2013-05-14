@@ -5,16 +5,15 @@
 
 package edu.santarosa.szcgat.thorn;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.media.MediaMetadataRetriever;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
@@ -56,30 +55,32 @@ public class GifProcessor extends IntentService {
 		String thumbnailPath = Camera.THUMBNAIL_PATH + File.separator
 				+ baseFilename + ".jpg";
 
-		String createGifCommand = ffmpegPath + " -ss 00:00:00.000 -i "
-				+ tempPath
-				+ " -pix_fmt rgb24 -r 10 -s 320x240 -t 00:00:10.000 " + gifPath;
+		String rotateParam = getRotateParam(tempPath);
+
+		String createGifCommand = ffmpegPath + " -i " + tempPath
+				+ " -pix_fmt rgb24 -r 10 -s 320x240 " + rotateParam + gifPath;
 
 		String createThumbnailCommand = ffmpegPath + " -i " + tempPath
 				+ " -vcodec mjpeg -vframes 1 -an -f rawvideo -s 512x384 "
-				+ thumbnailPath;
+				+ rotateParam + thumbnailPath;
 
 		try {
+
 			Runtime runtime = Runtime.getRuntime();
 			Process process = runtime.exec(createGifCommand);
 
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					process.getErrorStream()));
-			int read;
-			char[] buffer = new char[4096];
-			StringBuffer output = new StringBuffer();
-			while ((read = reader.read(buffer)) > 0) {
-				output.append(buffer, 0, read);
-			}
-			reader.close();
+			// BufferedReader reader = new BufferedReader(new InputStreamReader(
+			// process.getErrorStream()));
+			// int read;
+			// char[] buffer = new char[4096];
+			// StringBuffer output = new StringBuffer();
+			// while ((read = reader.read(buffer)) > 0) {
+			// output.append(buffer, 0, read);
+			// }
+			// reader.close();
 
 			process.waitFor();
-			Log.d("thorn", output.toString());
+			// Log.d("thorn", output.toString());
 
 			runtime.exec(createThumbnailCommand).waitFor();
 		}
@@ -131,4 +132,28 @@ public class GifProcessor extends IntentService {
 			out.write(buffer, 0, read);
 		}
 	}
+
+	private String getRotateParam(String videoPath) {
+		int orientation = getOrientation(videoPath);
+
+		switch (orientation) {
+		case 90:
+			return " -strict -2 -vf transpose=1 ";
+		case 180:
+			return " -strict -2 -vf hflip,vflip ";
+		case 270:
+			return " -strict -2 -vf transpose=2 ";
+		default:
+			return "";
+		}
+	}
+
+	private int getOrientation(String videoPath) {
+		MediaMetadataRetriever metaRetriever = new MediaMetadataRetriever();
+		metaRetriever.setDataSource(videoPath);
+		String rotation = metaRetriever
+				.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
+		return Integer.parseInt(rotation);
+	}
+
 }

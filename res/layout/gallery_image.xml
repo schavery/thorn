@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/gallery_image"
-    android:contentDescription="@string/sample"
-    android:layout_width="fill_parent"
-    android:background="@drawable/black_border"
-    android:adjustViewBounds="true" />
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="120dp"
+    android:layout_width="match_parent"
+    android:background="@drawable/black_border" >
+    
+    <ImageView 
+        android:contentDescription="@string/sample"
+        android:id="@+id/gallery_image"
+        android:layout_height="120dp"
+        android:layout_width="match_parent"
+        android:scaleType="centerCrop"
+        android:adjustViewBounds="true" />
+</RelativeLayout>
