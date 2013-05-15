@@ -31,7 +31,7 @@ public class GalleryActivity extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.activity_gallery_and_camera);
+		setContentView(R.layout.activity_gallery);
 		Gif.setContext(this);
 
 		mPagerAdapter = new GalleryPagerAdapter(getSupportFragmentManager());
