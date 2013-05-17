@@ -5,6 +5,8 @@
 
 package edu.santarosa.szcgat.thorn;
 
+import java.io.File;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -47,13 +49,6 @@ public class ProfileActivity extends FragmentActivity {
 		curGif = mViewPager.getCurrentItem();
 	}
 
-	// @Override
-	// public boolean onCreateOptionsMenu(Menu menu) {
-	// // Inflate the menu; this adds items to the action bar if it is present.
-	// getMenuInflater().inflate(R.menu.main, menu);
-	// return true;
-	// }
-
 	public static int getCurGif() {
 		return curGif;
 	}
@@ -66,9 +61,12 @@ public class ProfileActivity extends FragmentActivity {
 
 		@Override
 		public Fragment getItem(int position) {
-			Fragment fragment = new Profile();
+			Fragment fragment = new GifViewer();
 			Bundle bundle = new Bundle();
-			bundle.putInt("gif_index", position);
+			bundle.putString("basePath", Camera.THORN_PATH + File.separator);
+			bundle.putString("filename", Gallery.getGifs().get(position)
+					.getFilename()
+					+ ".gif");
 			fragment.setArguments(bundle);
 
 			return fragment;

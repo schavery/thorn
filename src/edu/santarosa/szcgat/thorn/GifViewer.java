@@ -7,12 +7,13 @@ package edu.santarosa.szcgat.thorn;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 
-public class Profile extends Fragment {
+public class GifViewer extends Fragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -20,10 +21,13 @@ public class Profile extends Fragment {
 		View view = inflater.inflate(R.layout.profile_gif, container, false);
 		WebView webView = (WebView) view.findViewById(R.id.profile_gif);
 
-		int index = this.getArguments().getInt("gif_index");
-
-		webView.loadUrl("file://"
-				+ Gallery.getGifs().get(index).getPath());
+		String filename = getArguments().getString("filename");
+		String basePath = getArguments().getString("basePath");
+		Log.d("thorn", filename);
+		Log.d("thorn", basePath);
+		webView.loadDataWithBaseURL("file://" + basePath,
+				"<html><center><img src=\"" + filename + "\"></html>",
+				"text/html", "utf-8", "");
 
 		return view;
 	}
