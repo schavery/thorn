@@ -6,10 +6,7 @@
 package edu.santarosa.szcgat.thorn;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -35,32 +32,53 @@ public class GifProcessor extends IntentService {
 	@Override
 	protected void onHandleIntent(Intent intent) {
 
-		String ffmpegPath = getFilesDir().getAbsolutePath() + File.separator
-				+ "ffmpeg";
-		File ffmpeg = new File(ffmpegPath);
-
-		if (!ffmpeg.exists()) {
-			copyFfmpeg();
-		}
-
-		if (!ffmpeg.canExecute()) {
-			ffmpeg.setExecutable(true);
-		}
+		// try {
+		// List<String> pngPaths = FileManager.getPngPaths();
+		// MagickImage[] allPngs = new MagickImage[pngPaths.size()];
+		// for (int i = 0; i < pngPaths.size(); i++) {
+		// allPngs[i] = new MagickImage(new ImageInfo(pngPaths.get(i)));
+		// }
+		//
+		// MagickImage gif = new MagickImage(allPngs);
+		// gif.setMagick("GIF");
+		// gif.setImageAttribute("Dispose", "1");
+		// gif.setImageAttribute("Delay", "500");
+		// byte[] badBlob = gif.imageToBlob(new ImageInfo());
+		// MagickImage realGif = new MagickImage(new ImageInfo(), badBlob);
+		// byte[] blob = realGif.imageToBlob(new ImageInfo());
+		// try {
+		// FileOutputStream out = new FileOutputStream(
+		// FileManager.TEMP_PATH + File.separator + "output.gif");
+		// out.write(blob);
+		// out.close();
+		// }
+		// catch (IOException ex) {
+		// System.out.println("Unable to write blob to file: " + ex);
+		// }
+		// }
+		// catch (MagickException e) {
+		// Log.d("thorn", "Magick error", e);
+		// }
 
 		String tempPath = intent.getData().getPath();
 		String baseFilename = intent.getData().getLastPathSegment()
 				.replaceFirst(".mp4", "");
-		String gifPath = Camera.THORN_PATH + File.separator + baseFilename
+		String gifPath = FileManager.THORN_PATH + File.separator + baseFilename
 				+ ".gif";
-		String thumbnailPath = Camera.THUMBNAIL_PATH + File.separator
+		String thumbnailPath = FileManager.THUMBNAIL_PATH + File.separator
 				+ baseFilename + ".jpg";
+		// String pngPath = FileManager.TEMP_PATH + File.separator
+		// + "output%05d.jpg";
 
 		String rotateParam = getRotateParam(tempPath);
 
-		String createGifCommand = ffmpegPath + " -i " + tempPath
+		String createGifCommand = FileManager.FFMPEG + " -i " + tempPath
 				+ " -pix_fmt rgb24 -r 10 -s 320x240 " + rotateParam + gifPath;
 
-		String createThumbnailCommand = ffmpegPath + " -i " + tempPath
+		// String createGifCommand = FileManager.FFMPEG + " -i " + tempPath
+		// + " -r 10 -s 320x240 " + rotateParam + pngPath;
+
+		String createThumbnailCommand = FileManager.FFMPEG + " -i " + tempPath
 				+ " -vcodec mjpeg -vframes 1 -an -f rawvideo -s 512x384 "
 				+ rotateParam + thumbnailPath;
 
@@ -104,33 +122,6 @@ public class GifProcessor extends IntentService {
 
 		File tempVideo = new File(tempPath);
 		tempVideo.delete();
-	}
-
-	private void copyFfmpeg() {
-		InputStream in = null;
-		OutputStream out = null;
-		try {
-			in = getAssets().open("ffmpeg");
-			out = new FileOutputStream(getFilesDir().getAbsolutePath()
-					+ File.separator + "ffmpeg");
-			copyFile(in, out);
-			in.close();
-			in = null;
-			out.flush();
-			out.close();
-			out = null;
-		}
-		catch (IOException e) {
-			Log.e("thorn", "Failed to copy ffmpeg", e);
-		}
-	}
-
-	private void copyFile(InputStream in, OutputStream out) throws IOException {
-		byte[] buffer = new byte[1024];
-		int read;
-		while ((read = in.read(buffer)) != -1) {
-			out.write(buffer, 0, read);
-		}
 	}
 
 	private String getRotateParam(String videoPath) {

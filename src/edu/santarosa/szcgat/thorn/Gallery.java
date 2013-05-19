@@ -5,14 +5,12 @@
 
 package edu.santarosa.szcgat.thorn;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -224,8 +222,9 @@ public class Gallery extends Fragment {
 			}
 
 			ImageView child = (ImageView) view.findViewById(R.id.gallery_image);
-			child.setImageURI(Uri.fromFile(new File(getItem(position)
-					.getThumbnail())));
+			// child.setImageURI(Uri.fromFile(new File(getItem(position)
+			// .getThumbnail())));
+			child.setImageURI(getItem(position).getThumbnailUri());
 
 			return view;
 		}

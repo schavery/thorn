@@ -7,7 +7,6 @@ package edu.santarosa.szcgat.thorn;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,8 +22,6 @@ public class GifViewer extends Fragment {
 
 		String filename = getArguments().getString("filename");
 		String basePath = getArguments().getString("basePath");
-		Log.d("thorn", filename);
-		Log.d("thorn", basePath);
 		webView.loadDataWithBaseURL("file://" + basePath,
 				"<html><center><img src=\"" + filename + "\"></html>",
 				"text/html", "utf-8", "");

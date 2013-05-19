@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import android.content.Context;
+import android.net.Uri;
 
 public class Gif {
 
@@ -14,13 +15,11 @@ public class Gif {
 	private String filename;
 	private String path;
 	private String thumbnail;
-	private static Context context;
 	private static ThornDatabase db = null;
 
 	// STATIC METHODS
 
-	public static void setContext(Context curContext) {
-		context = curContext;
+	public static void loadDatabase(Context context) {
 		db = ThornDatabase.getInstance(context);
 	}
 
@@ -38,8 +37,8 @@ public class Gif {
 
 	public static void destroy(long id) {
 		Gif gif = Gif.find(id);
-		File gifFile = new File(gif.getPath());
-		File thumbFile = new File(gif.getThumbnail());
+		File gifFile = gif.toFile();
+		File thumbFile = gif.getThumbnailFile();
 		gifFile.delete();
 		thumbFile.delete();
 		db.deleteGif(id);
@@ -50,10 +49,9 @@ public class Gif {
 	public Gif(long id, String filename) {
 		this.id = id;
 		this.filename = filename;
-		this.path = Camera.THORN_PATH + File.separator + filename
-				+ ".gif";
-		this.thumbnail = Camera.THUMBNAIL_PATH + File.separator
-				+ filename + ".jpg";
+		this.path = FileManager.THORN_PATH + File.separator + filename + ".gif";
+		this.thumbnail = FileManager.THUMBNAIL_PATH + File.separator + filename
+				+ ".jpg";
 	}
 
 	public void destroy() {
@@ -76,8 +74,24 @@ public class Gif {
 		return path;
 	}
 
-	public String getThumbnail() {
+	public String getThumbnailPath() {
 		return thumbnail;
+	}
+
+	public File toFile() {
+		return new File(path);
+	}
+
+	public File getThumbnailFile() {
+		return new File(thumbnail);
+	}
+
+	public Uri toUri() {
+		return Uri.fromFile(new File(path));
+	}
+
+	public Uri getThumbnailUri() {
+		return Uri.fromFile(new File(thumbnail));
 	}
 
 	@Override

@@ -63,7 +63,8 @@ public class ProfileActivity extends FragmentActivity {
 		public Fragment getItem(int position) {
 			Fragment fragment = new GifViewer();
 			Bundle bundle = new Bundle();
-			bundle.putString("basePath", Camera.THORN_PATH + File.separator);
+			bundle.putString("basePath", FileManager.THORN_PATH
+					+ File.separator);
 			bundle.putString("filename", Gallery.getGifs().get(position)
 					.getFilename()
 					+ ".gif");

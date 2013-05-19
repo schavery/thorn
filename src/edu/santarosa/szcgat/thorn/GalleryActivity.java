@@ -32,7 +32,9 @@ public class GalleryActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_gallery);
-		Gif.setContext(this);
+
+		Gif.loadDatabase(this);
+		FileManager.load(this);
 
 		mPagerAdapter = new GalleryPagerAdapter(getSupportFragmentManager());
 
@@ -40,10 +42,10 @@ public class GalleryActivity extends FragmentActivity {
 
 		mViewPager = (ViewPager) findViewById(R.id.gallery_pager);
 		mViewPager.setAdapter(mPagerAdapter);
-		mViewPager.setOnPageChangeListener(new Camera.CameraListener(
-				this));
+		mViewPager.setOnPageChangeListener(new Camera.CameraListener(this));
 
 		mViewPager.setCurrentItem(1);
+
 	}
 
 	@Override
