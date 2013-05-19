@@ -32,34 +32,6 @@ public class GifProcessor extends IntentService {
 	@Override
 	protected void onHandleIntent(Intent intent) {
 
-		// try {
-		// List<String> pngPaths = FileManager.getPngPaths();
-		// MagickImage[] allPngs = new MagickImage[pngPaths.size()];
-		// for (int i = 0; i < pngPaths.size(); i++) {
-		// allPngs[i] = new MagickImage(new ImageInfo(pngPaths.get(i)));
-		// }
-		//
-		// MagickImage gif = new MagickImage(allPngs);
-		// gif.setMagick("GIF");
-		// gif.setImageAttribute("Dispose", "1");
-		// gif.setImageAttribute("Delay", "500");
-		// byte[] badBlob = gif.imageToBlob(new ImageInfo());
-		// MagickImage realGif = new MagickImage(new ImageInfo(), badBlob);
-		// byte[] blob = realGif.imageToBlob(new ImageInfo());
-		// try {
-		// FileOutputStream out = new FileOutputStream(
-		// FileManager.TEMP_PATH + File.separator + "output.gif");
-		// out.write(blob);
-		// out.close();
-		// }
-		// catch (IOException ex) {
-		// System.out.println("Unable to write blob to file: " + ex);
-		// }
-		// }
-		// catch (MagickException e) {
-		// Log.d("thorn", "Magick error", e);
-		// }
-
 		String tempPath = intent.getData().getPath();
 		String baseFilename = intent.getData().getLastPathSegment()
 				.replaceFirst(".mp4", "");
