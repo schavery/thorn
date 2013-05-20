@@ -17,7 +17,14 @@ public class ExternalGifActivity extends FragmentActivity {
 		setContentView(R.layout.activity_external_gif);
 
 		GifViewer gifViewer = new GifViewer();
-		File gifFile = getFileFromUri(getIntent().getData());
+		File gifFile;
+
+		if (getIntent().getData().toString().startsWith("file://")) {
+			gifFile = new File(getIntent().getData().getPath());
+		}
+		else {
+			gifFile = getFileFromUri(getIntent().getData());
+		}
 
 		Bundle bundle = new Bundle();
 		bundle.putString("basePath", gifFile.getParent() + File.separator);

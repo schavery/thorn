@@ -39,16 +39,11 @@ public class GifProcessor extends IntentService {
 				+ ".gif";
 		String thumbnailPath = FileManager.THUMBNAIL_PATH + File.separator
 				+ baseFilename + ".jpg";
-		// String pngPath = FileManager.TEMP_PATH + File.separator
-		// + "output%05d.jpg";
 
 		String rotateParam = getRotateParam(tempPath);
 
 		String createGifCommand = FileManager.FFMPEG + " -i " + tempPath
 				+ " -pix_fmt rgb24 -r 10 -s 320x240 " + rotateParam + gifPath;
-
-		// String createGifCommand = FileManager.FFMPEG + " -i " + tempPath
-		// + " -r 10 -s 320x240 " + rotateParam + pngPath;
 
 		String createThumbnailCommand = FileManager.FFMPEG + " -i " + tempPath
 				+ " -vcodec mjpeg -vframes 1 -an -f rawvideo -s 512x384 "
