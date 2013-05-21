@@ -6,10 +6,13 @@
 package edu.santarosa.szcgat.thorn;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.os.Message;
 import android.os.Messenger;
@@ -42,8 +45,12 @@ public class GifProcessor extends IntentService {
 
 		String rotateParam = getRotateParam(tempPath);
 
-		String createGifCommand = FileManager.FFMPEG + " -i " + tempPath
-				+ " -pix_fmt rgb24 -r 10 -s 320x240 " + rotateParam + gifPath;
+		String jpgPath = FileManager.TEMP_PATH + File.separator
+				+ "output%05d.jpg";
+		String createJpgsCommand = FileManager.FFMPEG + " -i " + tempPath
+				+ " -r 10 -s 320x240 " + rotateParam + jpgPath;
+		// String createGifCommand = FileManager.FFMPEG + " -i " + tempPath
+		// + " -pix_fmt rgb24 -r 10 -s 320x240 " + rotateParam + gifPath;
 
 		String createThumbnailCommand = FileManager.FFMPEG + " -i " + tempPath
 				+ " -vcodec mjpeg -vframes 1 -an -f rawvideo -s 512x384 "
@@ -52,7 +59,7 @@ public class GifProcessor extends IntentService {
 		try {
 
 			Runtime runtime = Runtime.getRuntime();
-			Process process = runtime.exec(createGifCommand);
+			Process process = runtime.exec(createJpgsCommand);
 
 			// BufferedReader reader = new BufferedReader(new InputStreamReader(
 			// process.getErrorStream()));
@@ -76,6 +83,24 @@ public class GifProcessor extends IntentService {
 			Log.e("thorn", "InterruptedException", e);
 		}
 
+		File gifFile = new File(gifPath);
+
+		AnimatedGifEncoder encoder = new AnimatedGifEncoder();
+		encoder.setRepeat(0);
+		encoder.setDelay(100);
+		try {
+			encoder.start(new FileOutputStream(gifFile));
+
+			for (String jpg : FileManager.getJpgPaths()) {
+				encoder.addFrame(BitmapFactory.decodeFile(jpg));
+			}
+			encoder.finish();
+
+		}
+		catch (FileNotFoundException e) {
+			Log.d("thorn", "file not found", e);
+		}
+
 		Messenger messenger = (Messenger) intent.getExtras().get("MESSENGER");
 		Message msg = Message.obtain();
 		msg.obj = baseFilename;
@@ -89,6 +114,11 @@ public class GifProcessor extends IntentService {
 
 		File tempVideo = new File(tempPath);
 		tempVideo.delete();
+
+		for (String jpg : FileManager.getJpgPaths()) {
+			File jpgFile = new File(jpg);
+			jpgFile.delete();
+		}
 	}
 
 	private String getRotateParam(String videoPath) {

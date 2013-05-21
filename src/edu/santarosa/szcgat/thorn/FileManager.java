@@ -1,10 +1,13 @@
 package edu.santarosa.szcgat.thorn;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Context;
 import android.os.Environment;
@@ -25,6 +28,29 @@ public class FileManager {
 		context = curContext;
 		FFMPEG = context.getFilesDir().getAbsolutePath() + File.separator
 				+ "ffmpeg";
+	}
+
+	public static List<String> getJpgPaths() {
+		File folder = new File(TEMP_PATH);
+		File[] listOfJpgs = folder.listFiles(new FileFilter() {
+			@Override
+			public boolean accept(File file) {
+				if (file.getAbsolutePath().endsWith(".jpg")) {
+					return true;
+				}
+				else {
+					return false;
+				}
+			}
+		});
+
+		List<String> jpgPaths = new ArrayList<String>();
+
+		for (File jpg : listOfJpgs) {
+			jpgPaths.add(jpg.getAbsolutePath());
+		}
+
+		return jpgPaths;
 	}
 
 	public static boolean mediaMounted() {
